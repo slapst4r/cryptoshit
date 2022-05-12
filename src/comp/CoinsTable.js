@@ -1,8 +1,6 @@
 import {  Container,
-  createTheme,
   TableCell,
   LinearProgress,
-  ThemeProvider,
   Typography,
   TextField,
   TableBody,
@@ -11,8 +9,8 @@ import {  Container,
   TableContainer,
   Table,
   Paper, } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import axios from 'axios';
-import {makeStyles} from "@mui/styles";
 import { Pagination } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { CoinList } from '../cfg/api';
@@ -22,8 +20,21 @@ import { useHistory } from 'react-router-dom';
 export function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+const useStyles = makeStyles(() => ({
+  row: {
+    backgroundColor: "white",
+    cursor: "pointer",
+    '&:hover': {
+      backgroundColor: "#f2f0f0",
+    },
+    fontFamily: "Montserrat",
+  },
+  pagination: {
+    color: 'red'
+  },
+}));
 
-export default function CoinsTable()  {
+const CoinsTable = () => {
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
@@ -32,18 +43,22 @@ export default function CoinsTable()  {
   const { currency, symbol } = CoinState();
 
 
-
+  const classes = useStyles();
   const history = useHistory();
 
   async function fetchCoins() {
-    setLoading(true);
-    const { data } = await axios.get(CoinList(currency));
+    try {
+      setLoading(true);
+      const { data } = await axios.get(CoinList(currency));
 
-    setCoins(data);
-    setLoading(false);
+      setCoins(data);
+      setLoading(false);
+    } catch (err){
+      alert(err);
+    };
   };
 
-  console.log(coins);
+  //console.log(coins);
 
   useEffect(() => {
     fetchCoins();
@@ -87,8 +102,8 @@ export default function CoinsTable()  {
                     fontWeight: "700",
                     fontFamily: "Montserrat",
                   }}
-                  key={head}
-                  align={head === "Монетка" ? "" : "right"}
+                  key = {head}
+                  align = {head === "Монетка" ? "" : "right"}
                 >
                   {head}
                 </TableCell>
@@ -104,7 +119,7 @@ export default function CoinsTable()  {
                 return (
                   <TableRow
                     onClick={() => history.push(`/coins/${row.id}`)}
-                    className={row}
+                    className={classes.row}
                     key={row.name}
                   >
                     <TableCell
@@ -156,7 +171,7 @@ export default function CoinsTable()  {
                       {numberWithCommas(
                         row.market_cap.toString().slice(0, -6)
                       )}
-                      M
+                      
                     </TableCell>
                   </TableRow>
                 );
@@ -175,7 +190,7 @@ export default function CoinsTable()  {
         display: "flex",
         justifyContent: "center",
       }}
-      classes={{ ul: Pagination }}
+      classes={{ ul: classes.pagination }}
       onChange={(_, value) => {
         setPage(value);
         window.scroll(0, 450);
@@ -184,3 +199,5 @@ export default function CoinsTable()  {
   </Container>
   )
 }
+
+export default React.memo(CoinsTable);
