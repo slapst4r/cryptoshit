@@ -1,12 +1,12 @@
 import React from 'react'
 import Banner from '../comp/Banner/Banner';
-import CoinsTable from '../comp/CoinsTable';
+import CoinsTableMemo from '../comp/CoinsTable';
 
 const Homepage = () => {
   return (
     <>
     <Banner />
-    <CoinsTable />
+    <CoinsTableMemo />
   </>
   )
 };

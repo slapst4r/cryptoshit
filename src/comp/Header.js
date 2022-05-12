@@ -30,6 +30,7 @@ function Header() {
            className={classes.title}
            onClick={() => history.push('/')}
            variant="h6"
+           fontWeight="bold"
            >
              Crypto market 
           </Typography>
